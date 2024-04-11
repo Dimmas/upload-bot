@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 auth = BasicAuth(login='qaw7Mx', password='4bNrcu')
 session = AiohttpSession(proxy=('http://194.67.213.23:9558', auth))
 
-bot = Bot(token="7170610528:AAG1Pkc8UORSphj8FF0JduIGx-f8SYtp1WQ", session=session)
+#bot = Bot(token="7170610528:AAG1Pkc8UORSphj8FF0JduIGx-f8SYtp1WQ", session=session)
+bot = Bot(token="1700151459:AAF1ZXyRfsl8eSabSMRgcYCVlMCP4RVxRFQ", session=session)
 dp = Dispatcher()
 
 
@@ -54,8 +55,11 @@ async def download_document(message: Message, bot: Bot):
 
 
 @dp.message(Command("upfiles"))
-async def cmd_upfiles(message: types.Message):
-    await message.answer("Функция в разработке")
+async def download_chat_files(message: types.Message):
+    chat = await bot.get_chat(message.chat.id)
+    user = await chat.get_member(message.from_user.id)
+
+    await message.answer('Функция в разработке')
 
 if __name__ == "__main__":
     asyncio.run(main())

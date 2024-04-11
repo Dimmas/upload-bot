@@ -21,12 +21,9 @@ def handle_docs(message):
         bot.reply_to(message, "Произошла ошибка при загрузке файла.")
 
 
-@bot.message_handler(commands=['history'])  # определяем обработчик команды /history
-def get_history(message):
-    downloaded_file = bot.download_file('documents/file_0.pdf')
-
-    with open(f"telegram_files/old.pdf", 'wb') as new_file:
-        new_file.write(downloaded_file)
+@bot.message_handler(commands=['upfiles'])
+def download_chat_files(message):
+    pass
 
 bot.polling()
 

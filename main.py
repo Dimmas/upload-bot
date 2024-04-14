@@ -66,7 +66,7 @@ async def download_chat_files(message: types.Message):
 
     for registry in ('documents', 'photos'):
         file_registry = await registry_helper.get_registry(registry)
-        total_files = {i for i in range(max(file_registry))}
+        total_files = {i for i in range(max(file_registry) if file_registry else 1000)}
         delta = total_files - file_registry
 
         if len(delta) == 0:
@@ -76,7 +76,8 @@ async def download_chat_files(message: types.Message):
         for index in delta:
             for extention in ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx']:
                 file_name = f'file_{index}.{extention}'
-                if file := await file_helper.download_file(f'{registry}/{file_name}'):
+                file = await file_helper.download_file(f'{registry}/{file_name}')
+                if file:
                     break
 
             file_path = Path.cwd() / Path('saved_files') / registry / file_name

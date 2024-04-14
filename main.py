@@ -42,7 +42,7 @@ async def download_photo(message: Message, bot: Bot):
             return photo.file_id, photo.file_unique_id
 
     file_path = await download()
-    await registry_helper.register_file(file_path, 'photo')
+    await registry_helper.register_file(file_path, 'photos')
     await message.answer("Фото успешно загружено")
 
 

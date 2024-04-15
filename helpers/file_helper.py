@@ -80,6 +80,7 @@ class FileHelper(Helper):
                     await message.answer("Ошибка записи файла на сервер Юсофт")
                     return
 
+                self.logger.info({'from': message.chat.username, 'file_name': file_name})
                 return file_info.file_path
 
             return wrapper

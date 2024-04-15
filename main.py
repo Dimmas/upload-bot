@@ -41,25 +41,21 @@ async def download_photo(message: Message, bot: Bot):
         if photo := message.photo[-1]:
             return photo.file_id, photo.file_unique_id
 
-    file_path = await download()
-    if not file_path:
-        return
-    await registry_helper.register_file(file_path, 'photos')
-    await message.answer("Фото успешно загружено")
+    if file_path := await download():
+        await registry_helper.register_file(file_path, 'photos')
+        await message.answer("Фото успешно загружено")
 
 
 @dp.message(F.document)
 async def download_document(message: Message, bot: Bot):
     @file_helper.download(message, bot)
-    async def download(user_message: Message):
-        if document := user_message.document:
+    async def download():
+        if document := message.document:
             return document.file_id, document.file_name.split('.')[0]
 
-    file_path = await download(message)
-    if not file_path:
-        return
-    await registry_helper.register_file(file_path, 'documents')
-    await message.answer("Файл успешно загружен")
+    if file_path := await download():
+        await registry_helper.register_file(file_path, 'documents')
+        await message.answer("Файл успешно загружен")
 
 
 @dp.message(Command("upfiles"))
@@ -83,6 +79,9 @@ async def download_chat_files(message: types.Message):
                 file = await file_helper.download_file(f'{registry}/{file_name}')
                 if file:
                     break
+
+            if not file:
+                continue
 
             file_path = Path.cwd() / Path('saved_files') / registry / file_name
 

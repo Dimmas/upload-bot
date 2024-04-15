@@ -1,4 +1,4 @@
-aioredis
+redis
 aiohttp
 aiogram
 aiohttp-socks

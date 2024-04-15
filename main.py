@@ -42,6 +42,8 @@ async def download_photo(message: Message, bot: Bot):
             return photo.file_id, photo.file_unique_id
 
     file_path = await download()
+    if not file_path:
+        return
     await registry_helper.register_file(file_path, 'photos')
     await message.answer("Фото успешно загружено")
 
@@ -54,6 +56,8 @@ async def download_document(message: Message, bot: Bot):
             return document.file_id, document.file_name.split('.')[0]
 
     file_path = await download(message)
+    if not file_path:
+        return
     await registry_helper.register_file(file_path, 'documents')
     await message.answer("Файл успешно загружен")
 

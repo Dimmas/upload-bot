@@ -3,7 +3,7 @@ from io import BytesIO
 from aiogram import Bot
 from pathlib import Path
 from functools import wraps
-from aioredis import from_url
+from redis.asyncio import from_url
 from aiogram.types import Message
 from aiogram.exceptions import TelegramBadRequest
 
@@ -74,7 +74,7 @@ class FileHelper(Helper):
                         file_name = f"{file_name}_{await conn.get(f'counter_{message.media_group_id}')}.{file_extention}"
                         await conn.incr(f'counter_{message.media_group_id}')
 
-                file_path = Path.cwd() / Path('telegram_files') / file_name
+                file_path = Path('telegram_files', file_name)
 
                 if not await self.save_file(file_path, file):
                     await message.answer("Ошибка записи файла на сервер Юсофт")

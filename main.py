@@ -76,8 +76,7 @@ async def download_chat_files(message: types.Message):
         for index in delta:
             for extention in ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx']:
                 file_name = f'file_{index}.{extention}'
-                file = await file_helper.download_file(f'{registry}/{file_name}')
-                if file:
+                if file := await file_helper.download_file(f'{registry}/{file_name}'):
                     break
 
             if not file:

@@ -2,12 +2,13 @@ import aiofiles
 from io import BytesIO
 from aiogram import Bot
 from pathlib import Path
+from .helper import Helper
 from functools import wraps
 from redis.asyncio import from_url
 from aiogram.types import Message
 from aiogram.exceptions import TelegramBadRequest
+from aiofiles import os as aio_os
 
-from .helper import Helper
 
 redis = from_url("redis://172.17.0.2", encoding="utf8", decode_responses=True)
 
@@ -25,8 +26,25 @@ class FileHelper(Helper):
 
     async def save_file(self, file_path: Path, file: BytesIO) -> bool:
         file.seek(0)
+
+        cat_path = list(file_path.parents)[0]
+        await aio_os.makedirs(cat_path, exist_ok=True)
+
+        # Защита от перезаписи файлов при назывании их одним именем
+        path = file_path
         try:
-            async with aiofiles.open(file_path, "wb") as new_file:
+            await aio_os.stat(file_path)
+            for i in range(50):
+                file_name = f'{i}_{file_path.name}'
+                path = Path(cat_path, file_name)
+                await aio_os.stat(path)
+            self.logger.error(f"Превышен лимит для одноименных файлов: {file_name}")
+            return False
+        except:
+            pass
+
+        try:
+            async with aiofiles.open(path, "wb") as new_file:
                 await new_file.write(file.read())
         except Exception as e:
             self.logger.error(f"Write file error: {str(e)}")
@@ -74,13 +92,16 @@ class FileHelper(Helper):
                         file_name = f"{file_name}_{await conn.get(f'counter_{message.media_group_id}')}.{file_extention}"
                         await conn.incr(f'counter_{message.media_group_id}')
 
-                file_path = Path('telegram_files', file_name)
+                if message.from_user.first_name:
+                    file_path = Path('telegram_files', message.from_user.first_name, file_name)
+                else:
+                    file_path = Path('telegram_files', file_name)
 
                 if not await self.save_file(file_path, file):
                     await message.answer("Ошибка записи файла на сервер Юсофт")
                     return
 
-                self.logger.info({'from': message.chat.username, 'file_name': file_name})
+                self.logger.info({'from': message.from_user.first_name, 'file_name': file_name})
                 return file_info.file_path
 
             return wrapper

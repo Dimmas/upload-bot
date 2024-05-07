@@ -11,13 +11,12 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ADMIN_GROUP = ('usoft_ru', 'dimmas_bobrov')
+ADMIN_GROUP = ('nsoft_ru', 'dimmas_bobrov')
 
-auth = BasicAuth(login='qaw7Mx', password='4bNrcu')
-session = AiohttpSession(proxy=('http://194.67.213.23:9558', auth))
+auth = BasicAuth(login='proxlogin', password='[roxpwd]')
+session = AiohttpSession(proxy=('http://prox_ip:prox_port', auth))
 
-#bot = Bot(token="7170610528:AAG1Pkc8UORSphj8FF0JduIGx-f8SYtp1WQ", session=session) # Белый ворон
-bot = Bot(token="1700151459:AAF1ZXyRfsl8eSabSMRgcYCVlMCP4RVxRFQ", session=session)
+bot = Bot(token="super_token", session=session)
 dp = Dispatcher()
 
 file_helper = FileHelper(bot, logger)
@@ -26,7 +25,7 @@ registry_helper = RegistryHelper(bot, logger)
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    await message.answer("Бот для загрузки файлов на сервера Юсофт")
+    await message.answer("Бот для загрузки файлов на сервера Nсофт")
 
 
 async def main():
